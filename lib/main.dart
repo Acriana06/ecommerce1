@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:ecommerce/providers/cart_provider.dart';
 import 'package:ecommerce/providers/product_provider.dart';
 import 'package:ecommerce/screens/home_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ProductProvider(),
-      child: const MyApp(),
-    ),
+      MultiProvider(
+        providers: [
+
+          ChangeNotifierProvider(
+            create: (context) => ProductProvider(),
+          ),
+
+          ChangeNotifierProvider(
+            create: (context) => CartProvider(),
+          ),
+
+        ],
+
+        child: const MyApp(),
+      )
   );
 }
 

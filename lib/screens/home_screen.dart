@@ -29,9 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue[100],
         title: const Text("E-Commerce"),
       ),
-
+backgroundColor: Colors.blueGrey[200],
       body: Builder(
         builder: (context) {
 
