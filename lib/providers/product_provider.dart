@@ -15,7 +15,6 @@ class ProductProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   Future<void> fetchProducts() async {
-    print("fetchProducts() called");
 
     _products = await _apiService.fetchProducts();
 

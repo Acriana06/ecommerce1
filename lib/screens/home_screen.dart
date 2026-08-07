@@ -17,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     Future.microtask(() {
-      print("Calling provider");
       context.read<ProductProvider>().fetchProducts();
     });
   }
