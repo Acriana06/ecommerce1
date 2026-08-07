@@ -1,4 +1,5 @@
 import 'package:ecommerce/providers/product_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/widgets/product_card.dart';
@@ -57,18 +58,76 @@ backgroundColor: Colors.blueGrey[200],
           }
 
 
-          return ListView.builder(
-            itemCount: provider.products.length,
+          return Column(
+            children: [
 
-            itemBuilder: (context, index) {
+              Padding(
+                padding: const EdgeInsets.all(10),
 
-              final product = provider.products[index];
+                child: TextField(
+                  cursorColor: Colors.blue,
+                  decoration: const InputDecoration(
+                    hintText: "Search products...",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(borderRadius: BorderRadius. all(Radius. circular(50.0))),
+                  ),
 
-              return ProductCard(
-                product: product,
-              );
+                  onChanged: (value) {
+                    provider.searchProducts(value);
+                  },
 
-            },
+                ),
+              ),
+              SizedBox(
+                height: 50,
+
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+
+                  itemCount: provider.categories.length,
+
+                  itemBuilder: (context, index) {
+
+                    final category = provider.categories[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                      ),
+
+                      child: ElevatedButton(
+
+                        onPressed: () {
+                          provider.filterByCategory(category);
+                        },
+
+                        child: Text(category),
+                      ),
+                    );
+
+                  },
+                ),
+              ),
+
+
+              Expanded(
+                child: ListView.builder(
+
+                  itemCount: provider.products.length,
+
+                  itemBuilder: (context, index) {
+
+                    final product = provider.products[index];
+
+                    return ProductCard(
+                      product: product,
+                    );
+
+                  },
+                ),
+              ),
+
+            ],
           );
         },
       ),

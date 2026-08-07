@@ -44,14 +44,37 @@ class CartScreen extends StatelessWidget {
                     item.product.title,
                   ),
 
-                  subtitle: Text(
-                    "Quantity: ${item.quantity}",
+                  subtitle: Row(
+                    children: [
+
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+
+                        onPressed: () {
+                          cart.decreaseQuantity(item.product);
+                        },
+                      ),
+
+
+                      Text(
+                        "${item.quantity}",
+                      ),
+
+
+                      IconButton(
+                        icon: const Icon(Icons.add),
+
+                        onPressed: () {
+                          cart.increaseQuantity(item.product);
+                        },
+                      ),
+
+                    ],
                   ),
 
                   trailing: Text(
                     "\$${item.totalPrice}",
                   ),
-
                 );
               },
             ),
