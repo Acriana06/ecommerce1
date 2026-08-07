@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/widgets/product_card.dart';
-
+import 'package:ecommerce/screens/profile_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -30,8 +30,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue[100],
         title: const Text("E-Commerce"),
+
+        actions: [
+
+          IconButton(
+            icon: const Icon(Icons.person),
+
+            onPressed: () {
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+
+            },
+          ),
+
+        ],
       ),
 backgroundColor: Colors.blueGrey[200],
       body: Builder(
@@ -65,10 +83,12 @@ backgroundColor: Colors.blueGrey[200],
                 padding: const EdgeInsets.all(10),
 
                 child: TextField(
+
                   cursorColor: Colors.blue,
                   decoration: const InputDecoration(
                     hintText: "Search products...",
                     prefixIcon: Icon(Icons.search),
+
                     border: OutlineInputBorder(borderRadius: BorderRadius. all(Radius. circular(50.0))),
                   ),
 
