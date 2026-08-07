@@ -3,13 +3,16 @@ import 'package:http/http.dart' as http;
 import'dart:convert';
 class ApiService{
   Future<List<Product>> fetchProducts() async{
-    final response =  await http.get(
+    final response = await http.get(
         Uri.parse("https://fakestoreapi.com/products")
     );
+
+    print("Status code: ${response.statusCode}");
+    print(response.body.substring(0,100));
     if (response.statusCode== 200 ){
       final data = jsonDecode(response.body);
-      List<Product> products = data
-          .map((item)=>Product.fromJson(item))
+      List<Product> products = (data as List)
+          .map((item) => Product.fromJson(item))
           .toList();
       return products;
     } else {

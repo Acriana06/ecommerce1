@@ -26,7 +26,7 @@ class Product {
    image: json["image"],
    price: (json["price"] as num).toDouble(),
    rating: (json["rating"]["rate"] as num).toDouble(),
-   ratingCount: json["rating"]['Count'],
+   ratingCount: json["rating"]['count'],
   );
  }
 }
