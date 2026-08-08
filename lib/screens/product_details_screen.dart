@@ -30,6 +30,8 @@ import '../screens/cart_screen.dart';
              },
            ),
          ],
+         backgroundColor: Colors.purple[100],
+
        ),
        body: Padding(
            padding: EdgeInsets.all(25),
@@ -69,6 +71,9 @@ import '../screens/cart_screen.dart';
              width: double.infinity,
 
              child: ElevatedButton(
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: Colors.purple[900],
+                 foregroundColor: Colors.white               ),
                onPressed: () {
 
                  context.read<CartProvider>()
@@ -76,7 +81,7 @@ import '../screens/cart_screen.dart';
 
                  ScaffoldMessenger.of(context).showSnackBar(
                    const SnackBar(
-                     content: Text("Added to cart "),
+                     content: Text("Added to cart  "),
                    ),
                  );
 
@@ -85,6 +90,7 @@ import '../screens/cart_screen.dart';
                child: const Text(
                  "Add to Cart",
                ),
+
              ),
            ),
          ],

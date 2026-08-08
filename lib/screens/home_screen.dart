@@ -1,156 +1,287 @@
-import 'package:ecommerce/providers/product_provider.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:ecommerce/providers/product_provider.dart';
 import 'package:ecommerce/widgets/product_card.dart';
 import 'package:ecommerce/screens/profile_screen.dart';
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
+class HomeScreen extends StatefulWidget {
+const HomeScreen({super.key});
+
+@override
+State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+@override
+void initState() {
+super.initState();
 
-  @override
-  void initState() {
-    super.initState();
+Future.microtask(() {
+context.read<ProductProvider>().fetchProducts();
+});
+}
 
-    Future.microtask(() {
-      context.read<ProductProvider>().fetchProducts();
-    });
-  }
+@override
+Widget build(BuildContext context) {
+final provider = context.watch<ProductProvider>();
 
+return Scaffold(
+backgroundColor: const Color(0xFFF7F7F9),
 
-  @override
-  Widget build(BuildContext context) {
+appBar: AppBar(
+backgroundColor: Colors.purple[100],
+elevation: 0,
 
-    final provider = context.watch<ProductProvider>();
+title: const Text(
+"Shopora",
+style: TextStyle(
+fontSize: 24,
+fontWeight: FontWeight.bold,
+),
+),
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("E-Commerce"),
+actions: [
+IconButton(
+icon: const Icon(
+Icons.person_outline,
+size: 28,
+),
 
-        actions: [
+onPressed: () {
+Navigator.push(
+context,
+MaterialPageRoute(
+builder: (context) => const ProfileScreen(),
+),
+);
+},
+),
 
-          IconButton(
-            icon: const Icon(Icons.person),
+const SizedBox(width: 8),
+],
+),
 
-            onPressed: () {
+body: Builder(
+builder: (context) {
+// Loading
+if (provider.isLoading) {
+return const Center(
+child: CircularProgressIndicator(),
+);
+}
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
+// Error
+if (provider.errorMessage != null) {
+return Center(
+child: Padding(
+padding: const EdgeInsets.all(20),
+child: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+const Icon(
+Icons.error_outline,
+size: 50,
+color: Colors.redAccent,
+),
 
-            },
-          ),
+const SizedBox(height: 12),
 
-        ],
-      ),
-backgroundColor: Colors.blueGrey[200],
-      body: Builder(
-        builder: (context) {
+Text(
+provider.errorMessage!,
+textAlign: TextAlign.center,
+),
+],
+),
+),
+);
+}
 
-          if (provider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+// Empty
+if (provider.products.isEmpty) {
+return const Center(
+child: Text(
+"No products found",
+style: TextStyle(
+fontSize: 18,
+),
+),
+);
+}
 
+return Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      Text("Welcome to Shopora!🛍",style: TextStyle(fontSize: 20, color: Colors.purple[900]),),
+      SizedBox(height: 10,),
+      Text("Your all-in-one Shopping App.",style: TextStyle(fontSize: 18, color: Colors.purple[800]),),
+    ],
+  ),
+),// SEARCH BAR
+Padding(
+padding: const EdgeInsets.fromLTRB(
+16,
+16,
+16,
+10,
+),
 
-          if (provider.errorMessage != null) {
-            return Center(
-              child: Text(provider.errorMessage!),
-            );
-          }
+child: TextField(
+cursorColor: Colors.deepPurple,
 
+decoration: InputDecoration(
+hintText: "Search products...",
 
-          if (provider.products.isEmpty) {
-            return const Center(
-              child: Text("No products found"),
-            );
-          }
+prefixIcon: const Icon(
+Icons.search,
+),
 
+filled: true,
+fillColor: Colors.white,
 
-          return Column(
-            children: [
+contentPadding:
+const EdgeInsets.symmetric(
+vertical: 15,
+),
 
-              Padding(
-                padding: const EdgeInsets.all(10),
+border: OutlineInputBorder(
+borderRadius:
+BorderRadius.circular(30),
 
-                child: TextField(
+borderSide: BorderSide.none,
+),
+),
 
-                  cursorColor: Colors.blue,
-                  decoration: const InputDecoration(
-                    hintText: "Search products...",
-                    prefixIcon: Icon(Icons.search),
+onChanged: (value) {
+provider.searchProducts(value);
+},
+),
+),
 
-                    border: OutlineInputBorder(borderRadius: BorderRadius. all(Radius. circular(50.0))),
-                  ),
+// CATEGORIES TITLE
+const Padding(
+padding: EdgeInsets.symmetric(
+horizontal: 16,
+),
 
-                  onChanged: (value) {
-                    provider.searchProducts(value);
-                  },
+child: Text(
+"Categories",
+style: TextStyle(
+fontSize: 18,
+fontWeight: FontWeight.bold,
+),
+),
+),
 
-                ),
-              ),
-              SizedBox(
-                height: 50,
+const SizedBox(height: 8),
 
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
+// CATEGORIES
+SizedBox(
+height: 45,
 
-                  itemCount: provider.categories.length,
+child: ListView.builder(
+scrollDirection: Axis.horizontal,
 
-                  itemBuilder: (context, index) {
+padding: const EdgeInsets.symmetric(
+horizontal: 12,
+),
 
-                    final category = provider.categories[index];
+itemCount: provider.categories.length,
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 5,
-                      ),
+itemBuilder: (context, index) {
+final category =
+provider.categories[index];
 
-                      child: ElevatedButton(
+return Padding(
+padding:
+const EdgeInsets.symmetric(
+horizontal: 4,
+),
 
-                        onPressed: () {
-                          provider.filterByCategory(category);
-                        },
+child: ElevatedButton(
+onPressed: () {
+provider.filterByCategory(
+category,
+);
+},
 
-                        child: Text(category),
-                      ),
-                    );
+style: ElevatedButton.styleFrom(
+elevation: 0,
 
-                  },
-                ),
-              ),
+backgroundColor:
+Colors.deepPurple,
 
+foregroundColor:
+Colors.white,
 
-              Expanded(
-                child: ListView.builder(
+shape:
+RoundedRectangleBorder(
+borderRadius:
+BorderRadius.circular(
+20,
+),
+),
+),
 
-                  itemCount: provider.products.length,
+child: Text(
+category,
+style: const TextStyle(
+fontSize: 13,
+),
+),
+),
+);
+},
+),
+),
 
-                  itemBuilder: (context, index) {
+// PRODUCTS TITLE
+const Padding(
+padding: EdgeInsets.fromLTRB(
+16,
+16,
+16,
+8,
+),
 
-                    final product = provider.products[index];
+child: Text(
+"Products Available",
+style: TextStyle(
+fontSize: 22,
+fontWeight: FontWeight.bold,
+),
+),
+),
 
-                    return ProductCard(
-                      product: product,
-                    );
+// PRODUCT LIST
+Expanded(
+child: ListView.builder(
+padding: const EdgeInsets.only(
+bottom: 15,
+),
 
-                  },
-                ),
-              ),
+itemCount:
+provider.products.length,
 
-            ],
-          );
-        },
-      ),
-    );
-  }
+itemBuilder: (context, index) {
+final product =
+provider.products[index];
+
+return ProductCard(
+product: product,
+);
+},
+),
+),
+],
+);
+},
+),
+);
+}
 }

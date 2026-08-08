@@ -19,10 +19,17 @@ TextEditingController();
 final TextEditingController _passwordController =
 TextEditingController();
 
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 bool isLoading = false;
+bool obscurePassword = true;
 String? errorMessage;
 
 Future<void> login() async {
+if (!_formKey.currentState!.validate()) {
+return;
+}
+
 setState(() {
 isLoading = true;
 errorMessage = null;
@@ -30,7 +37,7 @@ errorMessage = null;
 
 try {
 final token = await _authService.login(
-_usernameController.text,
+_usernameController.text.trim(),
 _passwordController.text,
 );
 
@@ -69,46 +76,105 @@ super.dispose();
 @override
 Widget build(BuildContext context) {
 return Scaffold(
-appBar: AppBar(
-title: const Text("Login"),
-),
+body: SafeArea(
+child: Center(
+child: SingleChildScrollView(
+padding: const EdgeInsets.all(24),
 
-body: Padding(
-padding: const EdgeInsets.all(20),
+child: Form(
+key: _formKey,
 
 child: Column(
-mainAxisAlignment: MainAxisAlignment.center,
 children: [
 
 const Icon(
-Icons.shopping_bag,
-size: 70,
-),
-
-const SizedBox(height: 30),
-
-TextField(
-controller: _usernameController,
-decoration: const InputDecoration(
-labelText: "Username",
-border: OutlineInputBorder(),
-prefixIcon: Icon(Icons.person),
-),
-),
-
-const SizedBox(height: 15),
-
-TextField(
-controller: _passwordController,
-obscureText: true,
-decoration: const InputDecoration(
-labelText: "Password",
-border: OutlineInputBorder(),
-prefixIcon: Icon(Icons.lock),
-),
+Icons.shopping_bag_outlined,
+color: Colors.white,
+size: 80,
 ),
 
 const SizedBox(height: 20),
+
+const Text(
+"Welcome Back!",
+style: TextStyle(
+  color: Colors.white,
+fontSize: 28,
+fontWeight: FontWeight.bold,
+),
+),
+
+const SizedBox(height: 8),
+
+const Text(
+"Login to continue shopping",
+style: TextStyle(
+color: Colors.white,
+),
+),
+
+const SizedBox(height: 35),
+
+TextFormField(
+controller: _usernameController,
+
+decoration: const InputDecoration(
+labelText: "Username",
+hintText: "Enter your username",
+prefixIcon: Icon(Icons.person_outline),
+
+border: OutlineInputBorder(
+
+),
+),
+
+validator: (value) {
+if (value == null || value.trim().isEmpty) {
+return "Please enter your username";
+}
+
+return null;
+},
+),
+
+const SizedBox(height: 18),
+
+TextFormField(
+controller: _passwordController,
+obscureText: obscurePassword,
+
+decoration: InputDecoration(
+labelText: "Password",
+hintText: "Enter your password",
+prefixIcon: const Icon(Icons.lock_outline),
+
+suffixIcon: IconButton(
+icon: Icon(
+obscurePassword
+? Icons.visibility_off
+    : Icons.visibility,
+),
+
+onPressed: () {
+setState(() {
+obscurePassword = !obscurePassword;
+});
+},
+),
+
+border: const OutlineInputBorder(),
+),
+
+validator: (value) {
+if (value == null || value.isEmpty) {
+return "Please enter your password";
+}
+
+return null;
+},
+),
+
+const SizedBox(height: 15),
 
 if (errorMessage != null)
 Text(
@@ -118,11 +184,11 @@ color: Colors.red,
 ),
 ),
 
-const SizedBox(height: 15),
+const SizedBox(height: 20),
 
 SizedBox(
 width: double.infinity,
-height: 50,
+height: 52,
 
 child: ElevatedButton(
 onPressed: isLoading ? null : login,
@@ -136,23 +202,22 @@ child: CircularProgressIndicator(),
     : const Text(
 "Login",
 style: TextStyle(
-fontSize: 16,
+fontSize: 17,
 ),
 ),
 ),
 ),
 
-const SizedBox(height: 15),
+const SizedBox(height: 20),
 
-const Text(
-"Demo login: admin / 1234",
-style: TextStyle(
-color: Colors.grey,
-),
-),
+
 ],
+),
+),
+),
 ),
 ),
 );
 }
 }
+
